@@ -175,6 +175,17 @@ void SMAAEdgeDetectionOperation::deinitExecution()
 	this->m_valueReader = NULL;
 }
 
+void SMAAEdgeDetectionOperation::setThreshold(float threshold)
+{
+	m_threshold = threshold * 0.5;
+}
+
+void SMAAEdgeDetectionOperation::setLocalContrastAdaptationFactor(float factor)
+{
+	// todo (habib): replace with generic interval mapping function, e.g. from BLI_
+	m_local_contrast_adaptation_factor = (factor * 9) + 1;
+}
+
 bool SMAAEdgeDetectionOperation::determineDependingAreaOfInterest(rcti *input,
 								  ReadBufferOperation *readOperation, rcti *output)
 {
@@ -398,6 +409,11 @@ void SMAABlendingWeightCalculationOperation::initExecution()
 	this->m_imageReader = this->getInputSocketReader(0);
 }
 
+void SMAABlendingWeightCalculationOperation::setCornerRounding(float rounding)
+{
+	m_corner_rounding = static_cast<int>(rounding * 100);
+}
+
 void SMAABlendingWeightCalculationOperation::executePixel(float output[4], int x, int y, void */*data*/)
 {
 	float edges[4], c[4];
@@ -490,13 +506,13 @@ bool SMAABlendingWeightCalculationOperation::determineDependingAreaOfInterest(rc
 {
 	rcti newInput;
 
-	newInput.xmax = input->xmax + max(SMAA_MAX_SEARCH_STEPS,
+	newInput.xmax = input->xmax + fmax(SMAA_MAX_SEARCH_STEPS,
 					  SMAA_MAX_SEARCH_STEPS_DIAG + 1);
-	newInput.xmin = input->xmin - max(max(SMAA_MAX_SEARCH_STEPS - 1, 1),
+	newInput.xmin = input->xmin - fmax(fmax(SMAA_MAX_SEARCH_STEPS - 1, 1),
 					  SMAA_MAX_SEARCH_STEPS_DIAG + 1);
-	newInput.ymax = input->ymax + max(SMAA_MAX_SEARCH_STEPS,
+	newInput.ymax = input->ymax + fmax(SMAA_MAX_SEARCH_STEPS,
 					  SMAA_MAX_SEARCH_STEPS_DIAG);
-	newInput.ymin = input->ymin - max(max(SMAA_MAX_SEARCH_STEPS - 1, 1),
+	newInput.ymin = input->ymin - fmax(fmax(SMAA_MAX_SEARCH_STEPS - 1, 1),
 					  SMAA_MAX_SEARCH_STEPS_DIAG);
 
 	return NodeOperation::determineDependingAreaOfInterest(&newInput, readOperation, output);

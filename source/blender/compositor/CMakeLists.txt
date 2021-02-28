@@ -298,8 +298,8 @@ set(SRC
   nodes/COM_InpaintNode.h
   nodes/COM_AntiAliasingNode.cc
   nodes/COM_AntiAliasingNode.h
-  
-  operations/COM_BlurBaseOperation.cpp
+
+  operations/COM_BlurBaseOperation.cc
   operations/COM_BlurBaseOperation.h
   operations/COM_BokehBlurOperation.cc
   operations/COM_BokehBlurOperation.h
@@ -327,7 +327,7 @@ set(SRC
   operations/COM_VariableSizeBokehBlurOperation.h
   operations/COM_SMAAOperation.cc
   operations/COM_SMAAOperation.h
-  
+
   # Matte nodes
   nodes/COM_BoxMaskNode.cc
   nodes/COM_BoxMaskNode.h
