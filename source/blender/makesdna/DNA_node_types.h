@@ -715,13 +715,9 @@ typedef struct NodeBilateralBlurData {
 } NodeBilateralBlurData;
 
 typedef struct NodeAntiAliasingData {
-  float thresh;
-  float val_thresh;
-  float adapt_fac;
-  float rounding;
-  char detect_type;
-  char corner;
-  char _pad[2];
+  float threshold;
+  float local_contrast_adaptation_factor;
+  float corner_rounding;
 } NodeAntiAliasingData;
 
 /* NOTE: Only for do-version code. */

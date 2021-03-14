@@ -50,13 +50,8 @@ public:
 	 */
 	void deinitExecution();
 
-	/**
-	 * map from [0, 1] to [0, 0.5]
-	 */
 	void setThreshold(float threshold);
-	/**
-	 * map to [0, 1] to [1, 10]
-	 */
+
 	void setLocalContrastAdaptationFactor(float factor);
 
 	bool determineDependingAreaOfInterest(rcti *input, ReadBufferOperation *readOperation, rcti *output);
@@ -105,9 +100,6 @@ public:
 	 */
 	void deinitExecution();
 
-	/**
-	 * Map from [0, 1] to [0, 100]
-	 */
 	void setCornerRounding(float rounding);
 
 	bool determineDependingAreaOfInterest(rcti *input, ReadBufferOperation *readOperation, rcti *output);

@@ -35,25 +35,19 @@
 
 static bNodeSocketTemplate cmp_node_antialiasing_in[] = {
     {SOCK_RGBA, N_("Image"), 1.0f, 1.0f, 1.0f, 1.0f},
-    /* {SOCK_FLOAT, N_("Value"), 1.0f, 1.0f, 1.0f, 1.0f}, */
     {-1, ""}};
 
 static bNodeSocketTemplate cmp_node_antialiasing_out[] = {
     {SOCK_RGBA, N_("Image")},
-    //{SOCK_RGBA, N_("Edges")},
-    /* {   SOCK_RGBA, N_("Blending Weights")}, */
     {-1, ""}};
 
 static void node_composit_init_antialiasing(bNodeTree *UNUSED(ntree), bNode *node)
 {
   NodeAntiAliasingData *data = MEM_callocN(sizeof(NodeAntiAliasingData), "node antialiasing data");
 
-  data->detect_type = CMP_NODE_ANTIALIASING_COLOR;
-  data->thresh = 1;// 0.5f;
-  data->val_thresh = 0.1f;
-  data->adapt_fac = 0.2; // 2.0f;
-  data->corner = true;
-  data->rounding = 0.25; // 25;
+  data->threshold = 1;
+  data->local_contrast_adaptation_factor = 0.2;
+  data->corner_rounding = 0.25;
 
   node->storage = data;
 }

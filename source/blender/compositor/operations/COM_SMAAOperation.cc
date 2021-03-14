@@ -177,13 +177,14 @@ void SMAAEdgeDetectionOperation::deinitExecution()
 
 void SMAAEdgeDetectionOperation::setThreshold(float threshold)
 {
-	m_threshold = threshold * 0.5;
+	/* UI values are between 0 and 1 for simplicity but algorithm expects values between 0 and 0.5 */
+	m_threshold = scalenorm(0, 0.5, threshold);
 }
 
 void SMAAEdgeDetectionOperation::setLocalContrastAdaptationFactor(float factor)
 {
-	// todo (habib): replace with generic interval mapping function, e.g. from BLI_
-	m_local_contrast_adaptation_factor = (factor * 9) + 1;
+	/* UI values are between 0 and 1 for simplicity but algorithm expects values between 1 and 10 */
+	m_local_contrast_adaptation_factor = scalenorm(1, 10, factor);
 }
 
 bool SMAAEdgeDetectionOperation::determineDependingAreaOfInterest(rcti *input,
@@ -411,7 +412,8 @@ void SMAABlendingWeightCalculationOperation::initExecution()
 
 void SMAABlendingWeightCalculationOperation::setCornerRounding(float rounding)
 {
-	m_corner_rounding = static_cast<int>(rounding * 100);
+	/* UI values are between 0 and 1 for simplicity but algorithm expects values between 0 and 100 */
+	m_corner_rounding = static_cast<int>(scalenorm(0, 100, rounding));
 }
 
 void SMAABlendingWeightCalculationOperation::executePixel(float output[4], int x, int y, void */*data*/)

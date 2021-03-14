@@ -30,44 +30,19 @@ void AntiAliasingNode::convertToOperations(NodeConverter &converter, const Compo
 	/* Edge Detection (First Pass) */
 	SMAAEdgeDetectionOperation *operation1 = NULL;
 
-	/*
-	switch (data->detect_type) {
-	case CMP_NODE_ANTIALIASING_LUMA:
-		operation1 = new SMAALumaEdgeDetectionOperation();
-		operation1->setThreshold(data->thresh);
-		operation1->setLocalContrastAdaptationFactor(data->adapt_fac);
-		break;
-	case CMP_NODE_ANTIALIASING_COLOR:
-		operation1 = new SMAAColorEdgeDetectionOperation();
-		operation1->setThreshold(data->thresh);
-		operation1->setLocalContrastAdaptationFactor(data->adapt_fac);
-		break;
-	case CMP_NODE_ANTIALIASING_VALUE:
-		operation1 = new SMAADepthEdgeDetectionOperation();
-		operation1->setThreshold(data->val_thresh);
-		break;
-	}
-	*/
-
 	operation1 = new SMAALumaEdgeDetectionOperation();
-	operation1->setThreshold(data->thresh);
-	operation1->setLocalContrastAdaptationFactor(data->adapt_fac);
+	operation1->setThreshold(data->threshold);
+	operation1->setLocalContrastAdaptationFactor(data->local_contrast_adaptation_factor);
 	converter.addOperation(operation1);
 
 	converter.mapInputSocket(getInputSocket(0), operation1->getInputSocket(0));
-	/* converter.mapInputSocket(getInputSocket(1), operation1->getInputSocket(1)); */
-	/* converter.mapOutputSocket(getOutputSocket(1), operation1->getOutputSocket()); */
 
 	/* Blending Weight Calculation Pixel Shader (Second Pass) */
 	SMAABlendingWeightCalculationOperation *operation2 = new SMAABlendingWeightCalculationOperation();
-	/* operation2->setEnableCornerDetection(data->corner); */
-	operation2->setCornerRounding(data->rounding);
+	operation2->setCornerRounding(data->corner_rounding);
 	converter.addOperation(operation2);
 
 	converter.addLink(operation1->getOutputSocket(), operation2->getInputSocket(0));
-
-	/* this may be needed for debugging */
-	// converter.mapOutputSocket(getOutputSocket(2), operation2->getOutputSocket());
 
 	/* Neighborhood Blending Pixel Shader (Third Pass) */
 	SMAANeighborhoodBlendingOperation *operation3 = new SMAANeighborhoodBlendingOperation();

@@ -180,6 +180,13 @@ MINLINE double interpd(double target, double origin, double fac)
   return (fac * target) + (1.0f - fac) * origin;
 }
 
+/* Map a normalized value, i.e. from interval [0, 1] to interval [a, b]  */
+MINLINE float scalenorm(float a, float b, float x)
+{
+  BLI_assert(x <= 1 && x >= 0);
+  return (x * (b-a)) + a;
+}
+
 /* used for zoom values*/
 MINLINE float power_of_2(float val)
 {
