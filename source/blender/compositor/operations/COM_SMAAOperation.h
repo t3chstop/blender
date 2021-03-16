@@ -26,128 +26,140 @@
 /* Edge Detection (First Pass) */
 
 class SMAAEdgeDetectionOperation : public NodeOperation {
-protected:
-	SocketReader *m_imageReader;
-	SocketReader *m_valueReader;
+ protected:
+  SocketReader *m_imageReader;
+  SocketReader *m_valueReader;
 
-	float m_threshold;
-	float m_local_contrast_adaptation_factor;
-public:
-	SMAAEdgeDetectionOperation();
+  float m_threshold;
+  float m_contrast_limit;
 
-	/**
-	 * the inner loop of this program
-	 */
-	virtual void executePixel(float output[4], int x, int y, void *data) = 0;
+ public:
+  SMAAEdgeDetectionOperation();
 
-	/**
-	 * Initialize the execution
-	 */
-	void initExecution();
+  /**
+   * the inner loop of this program
+   */
+  virtual void executePixel(float output[4], int x, int y, void *data) = 0;
 
-	/**
-	 * Deinitialize the execution
-	 */
-	void deinitExecution();
+  /**
+   * Initialize the execution
+   */
+  void initExecution();
 
-	void setThreshold(float threshold);
+  /**
+   * Deinitialize the execution
+   */
+  void deinitExecution();
 
-	void setLocalContrastAdaptationFactor(float factor);
+  void setThreshold(float threshold);
 
-	bool determineDependingAreaOfInterest(rcti *input, ReadBufferOperation *readOperation, rcti *output);
+  void setLocalContrastAdaptationFactor(float factor);
+
+  bool determineDependingAreaOfInterest(rcti *input,
+                                        ReadBufferOperation *readOperation,
+                                        rcti *output);
 };
 
-class SMAALumaEdgeDetectionOperation: public SMAAEdgeDetectionOperation {
-public:
-	void executePixel(float output[4], int x, int y, void *data);
+class SMAALumaEdgeDetectionOperation : public SMAAEdgeDetectionOperation {
+ public:
+  void executePixel(float output[4], int x, int y, void *data);
 };
 
-class SMAAColorEdgeDetectionOperation: public SMAAEdgeDetectionOperation {
-public:
-	void executePixel(float output[4], int x, int y, void *data);
+class SMAAColorEdgeDetectionOperation : public SMAAEdgeDetectionOperation {
+ public:
+  void executePixel(float output[4], int x, int y, void *data);
 };
 
 class SMAADepthEdgeDetectionOperation : public SMAAEdgeDetectionOperation {
-public:
-	void executePixel(float output[4], int x, int y, void *data);
-	bool determineDependingAreaOfInterest(rcti *input, ReadBufferOperation *readOperation, rcti *output);
+ public:
+  void executePixel(float output[4], int x, int y, void *data);
+  bool determineDependingAreaOfInterest(rcti *input,
+                                        ReadBufferOperation *readOperation,
+                                        rcti *output);
 };
 
 /*-----------------------------------------------------------------------------*/
 /*  Blending Weight Calculation (Second Pass) */
 
 class SMAABlendingWeightCalculationOperation : public NodeOperation {
-private:
-	SocketReader *m_imageReader;
+ private:
+  SocketReader *m_imageReader;
 
-	int m_corner_rounding;
-public:
-	SMAABlendingWeightCalculationOperation();
+  int m_corner_rounding;
 
-	/**
-	 * the inner loop of this program
-	 */
-	void executePixel(float output[4], int x, int y, void *data);
+ public:
+  SMAABlendingWeightCalculationOperation();
 
-	/**
-	 * Initialize the execution
-	 */
-	void initExecution();
-	void *initializeTileData(rcti *rect);
+  /**
+   * the inner loop of this program
+   */
+  void executePixel(float output[4], int x, int y, void *data);
 
-	/**
-	 * Deinitialize the execution
-	 */
-	void deinitExecution();
+  /**
+   * Initialize the execution
+   */
+  void initExecution();
+  void *initializeTileData(rcti *rect);
 
-	void setCornerRounding(float rounding);
+  /**
+   * Deinitialize the execution
+   */
+  void deinitExecution();
 
-	bool determineDependingAreaOfInterest(rcti *input, ReadBufferOperation *readOperation, rcti *output);
-private:
-	/* Diagonal Search Functions */
-	int searchDiag1(int x, int y, int dir, bool *found);
-	int searchDiag2(int x, int y, int dir, bool *found);
-	void calculateDiagWeights(int x, int y, const float edges[2], float weights[2]);
-	bool isVerticalSearchUnneeded(int x, int y);
+  void setCornerRounding(float rounding);
 
-	/* Horizontal/Vertical Search Functions */
-	int searchXLeft(int x, int y);
-	int searchXRight(int x, int y);
-	int searchYUp(int x, int y);
-	int searchYDown(int x, int y);
+  bool determineDependingAreaOfInterest(rcti *input,
+                                        ReadBufferOperation *readOperation,
+                                        rcti *output);
 
-	/*  Corner Detection Functions */
-	void detectHorizontalCornerPattern(float weights[2], int left, int right, int y, int d1, int d2);
-	void detectVerticalCornerPattern(float weights[2], int x, int top, int bottom, int d1, int d2);
+ private:
+  /* Diagonal Search Functions */
+  int searchDiag1(int x, int y, int dir, bool *found);
+  int searchDiag2(int x, int y, int dir, bool *found);
+  void calculateDiagWeights(int x, int y, const float edges[2], float weights[2]);
+  bool isVerticalSearchUnneeded(int x, int y);
+
+  /* Horizontal/Vertical Search Functions */
+  int searchXLeft(int x, int y);
+  int searchXRight(int x, int y);
+  int searchYUp(int x, int y);
+  int searchYDown(int x, int y);
+
+  /*  Corner Detection Functions */
+  void detectHorizontalCornerPattern(float weights[2], int left, int right, int y, int d1, int d2);
+  void detectVerticalCornerPattern(float weights[2], int x, int top, int bottom, int d1, int d2);
 };
 
 /*-----------------------------------------------------------------------------*/
 /* Neighborhood Blending (Third Pass) */
 
 class SMAANeighborhoodBlendingOperation : public NodeOperation {
-private:
-	SocketReader *m_image1Reader;
-	SocketReader *m_image2Reader;
-public:
-	SMAANeighborhoodBlendingOperation();
+ private:
+  SocketReader *m_image1Reader;
+  SocketReader *m_image2Reader;
 
-	/**
-	 * the inner loop of this program
-	 */
-	void executePixel(float output[4], int x, int y, void *data);
+ public:
+  SMAANeighborhoodBlendingOperation();
 
-	/**
-	 * Initialize the execution
-	 */
-	void initExecution();
-	void *initializeTileData(rcti *rect);
+  /**
+   * the inner loop of this program
+   */
+  void executePixel(float output[4], int x, int y, void *data);
 
-	/**
-	 * Deinitialize the execution
-	 */
-	void deinitExecution();
+  /**
+   * Initialize the execution
+   */
+  void initExecution();
+  void *initializeTileData(rcti *rect);
 
-	bool determineDependingAreaOfInterest(rcti *input, ReadBufferOperation *readOperation, rcti *output);
+  /**
+   * Deinitialize the execution
+   */
+  void deinitExecution();
+
+  bool determineDependingAreaOfInterest(rcti *input,
+                                        ReadBufferOperation *readOperation,
+                                        rcti *output);
 };
 
 #endif

@@ -28,9 +28,11 @@
  * @ingroup Node
  */
 class AntiAliasingNode : public Node {
-public:
-	AntiAliasingNode(bNode *editorNode) : Node(editorNode) {}
-	void convertToOperations(NodeConverter &converter, const CompositorContext &context) const;
+ public:
+  AntiAliasingNode(bNode *editorNode) : Node(editorNode)
+  {
+  }
+  void convertToOperations(NodeConverter &converter, const CompositorContext &context) const;
 };
 
 #endif

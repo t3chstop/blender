@@ -716,7 +716,7 @@ typedef struct NodeBilateralBlurData {
 
 typedef struct NodeAntiAliasingData {
   float threshold;
-  float local_contrast_adaptation_factor;
+  float contrast_limit;
   float corner_rounding;
 } NodeAntiAliasingData;
 
@@ -1590,13 +1590,6 @@ typedef enum CMPNodeSetAlphaMode {
   CMP_NODE_SETALPHA_MODE_APPLY = 0,
   CMP_NODE_SETALPHA_MODE_REPLACE_ALPHA = 1,
 } CMPNodeSetAlphaMode;
-
-/* Anti-Aliasing Node (detect_type) */
-typedef enum CMPNodeAntiAliasingDetectionMode {
-  CMP_NODE_ANTIALIASING_LUMA = 0,
-  CMP_NODE_ANTIALIASING_COLOR = 1,
-  CMP_NODE_ANTIALIASING_VALUE = 2,
-} CMPNodeAntiAliasingDetectionMode;
 
 #define CMP_NODE_PLANETRACKDEFORM_MBLUR_SAMPLES_MAX 64
 

@@ -1532,7 +1532,7 @@ static void node_composit_buts_antialiasing(uiLayout *layout, bContext *UNUSED(C
   col = uiLayoutColumn(layout, false);
 
   uiItemR(col, ptr, "threshold", 0, NULL, ICON_NONE);
-  uiItemR(col, ptr, "local_contrast_adaptation_factor", 0, NULL, ICON_NONE);
+  uiItemR(col, ptr, "contrast_limit", 0, NULL, ICON_NONE);
   uiItemR(col, ptr, "corner_rounding", 0, NULL, ICON_NONE);
 }
 

@@ -19,36 +19,38 @@
  */
 
 #include "COM_AntiAliasingNode.h"
-#include "DNA_node_types.h"
 #include "COM_SMAAOperation.h"
+#include "DNA_node_types.h"
 
-void AntiAliasingNode::convertToOperations(NodeConverter &converter, const CompositorContext &/*context*/) const
+void AntiAliasingNode::convertToOperations(NodeConverter &converter,
+                                           const CompositorContext & /*context*/) const
 {
-	bNode *node = this->getbNode();
-	NodeAntiAliasingData *data = (NodeAntiAliasingData *)node->storage;
+  bNode *node = this->getbNode();
+  NodeAntiAliasingData *data = (NodeAntiAliasingData *)node->storage;
 
-	/* Edge Detection (First Pass) */
-	SMAAEdgeDetectionOperation *operation1 = NULL;
+  /* Edge Detection (First Pass) */
+  SMAAEdgeDetectionOperation *operation1 = NULL;
 
-	operation1 = new SMAALumaEdgeDetectionOperation();
-	operation1->setThreshold(data->threshold);
-	operation1->setLocalContrastAdaptationFactor(data->local_contrast_adaptation_factor);
-	converter.addOperation(operation1);
+  operation1 = new SMAALumaEdgeDetectionOperation();
+  operation1->setThreshold(data->threshold);
+  operation1->setLocalContrastAdaptationFactor(data->contrast_limit);
+  converter.addOperation(operation1);
 
-	converter.mapInputSocket(getInputSocket(0), operation1->getInputSocket(0));
+  converter.mapInputSocket(getInputSocket(0), operation1->getInputSocket(0));
 
-	/* Blending Weight Calculation Pixel Shader (Second Pass) */
-	SMAABlendingWeightCalculationOperation *operation2 = new SMAABlendingWeightCalculationOperation();
-	operation2->setCornerRounding(data->corner_rounding);
-	converter.addOperation(operation2);
+  /* Blending Weight Calculation Pixel Shader (Second Pass) */
+  SMAABlendingWeightCalculationOperation *operation2 =
+      new SMAABlendingWeightCalculationOperation();
+  operation2->setCornerRounding(data->corner_rounding);
+  converter.addOperation(operation2);
 
-	converter.addLink(operation1->getOutputSocket(), operation2->getInputSocket(0));
+  converter.addLink(operation1->getOutputSocket(), operation2->getInputSocket(0));
 
-	/* Neighborhood Blending Pixel Shader (Third Pass) */
-	SMAANeighborhoodBlendingOperation *operation3 = new SMAANeighborhoodBlendingOperation();
-	converter.addOperation(operation3);
+  /* Neighborhood Blending Pixel Shader (Third Pass) */
+  SMAANeighborhoodBlendingOperation *operation3 = new SMAANeighborhoodBlendingOperation();
+  converter.addOperation(operation3);
 
-	converter.mapInputSocket(getInputSocket(0), operation3->getInputSocket(0));
-	converter.addLink(operation2->getOutputSocket(), operation3->getInputSocket(1));
-	converter.mapOutputSocket(getOutputSocket(0), operation3->getOutputSocket());
+  converter.mapInputSocket(getInputSocket(0), operation3->getInputSocket(0));
+  converter.addLink(operation2->getOutputSocket(), operation3->getInputSocket(1));
+  converter.mapOutputSocket(getOutputSocket(0), operation3->getOutputSocket());
 }

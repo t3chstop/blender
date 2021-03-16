@@ -184,7 +184,7 @@ MINLINE double interpd(double target, double origin, double fac)
 MINLINE float scalenorm(float a, float b, float x)
 {
   BLI_assert(x <= 1 && x >= 0);
-  return (x * (b-a)) + a;
+  return (x * (b - a)) + a;
 }
 
 /* used for zoom values*/
