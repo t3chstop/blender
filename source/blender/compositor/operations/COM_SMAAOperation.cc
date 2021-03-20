@@ -65,7 +65,7 @@ static inline void sample(SocketReader *reader, int x, int y, float color[4])
     return;
   }
 
-  reader->read(color, x, y, NULL);
+  reader->read(color, x, y, nullptr);
 }
 
 static void sample_bilinear_vertical(
@@ -162,8 +162,8 @@ SMAAEdgeDetectionOperation::SMAAEdgeDetectionOperation() : NodeOperation()
   this->addInputSocket(COM_DT_VALUE); /* depth, material ID, etc. */
   this->addOutputSocket(COM_DT_COLOR);
   this->setComplex(true);
-  this->m_imageReader = NULL;
-  this->m_valueReader = NULL;
+  this->m_imageReader = nullptr;
+  this->m_valueReader = nullptr;
   this->m_threshold = 0.1f;
   this->m_contrast_limit = 2.0f;
 }
@@ -176,8 +176,8 @@ void SMAAEdgeDetectionOperation::initExecution()
 
 void SMAAEdgeDetectionOperation::deinitExecution()
 {
-  this->m_imageReader = NULL;
-  this->m_valueReader = NULL;
+  this->m_imageReader = nullptr;
+  this->m_valueReader = nullptr;
 }
 
 void SMAAEdgeDetectionOperation::setThreshold(float threshold)
@@ -227,8 +227,9 @@ void SMAALumaEdgeDetectionOperation::executePixel(float output[4], int x, int y,
   output[3] = 1.0f;
 
   /* Then discard if there is no edge: */
-  if (is_zero_v2(output))
+  if (is_zero_v2(output)) {
     return;
+  }
 
   /* Calculate right and bottom deltas: */
   sample(m_imageReader, x + 1, y, color);
@@ -406,7 +407,7 @@ SMAABlendingWeightCalculationOperation::SMAABlendingWeightCalculationOperation()
   this->addInputSocket(COM_DT_COLOR); /* edges */
   this->addOutputSocket(COM_DT_COLOR);
   this->setComplex(true);
-  this->m_imageReader = NULL;
+  this->m_imageReader = nullptr;
   this->m_corner_rounding = 25;
 }
 
@@ -525,7 +526,7 @@ void SMAABlendingWeightCalculationOperation::executePixel(float output[4],
 
 void SMAABlendingWeightCalculationOperation::deinitExecution()
 {
-  this->m_imageReader = NULL;
+  this->m_imageReader = nullptr;
 }
 
 bool SMAABlendingWeightCalculationOperation::determineDependingAreaOfInterest(
@@ -893,8 +894,8 @@ SMAANeighborhoodBlendingOperation::SMAANeighborhoodBlendingOperation() : NodeOpe
   this->addInputSocket(COM_DT_COLOR); /* blend */
   this->addOutputSocket(COM_DT_COLOR);
   this->setComplex(true);
-  this->m_image1Reader = NULL;
-  this->m_image2Reader = NULL;
+  this->m_image1Reader = nullptr;
+  this->m_image2Reader = nullptr;
 }
 
 void *SMAANeighborhoodBlendingOperation::initializeTileData(rcti *rect)
@@ -958,8 +959,8 @@ void SMAANeighborhoodBlendingOperation::executePixel(float output[4],
 
 void SMAANeighborhoodBlendingOperation::deinitExecution()
 {
-  this->m_image1Reader = NULL;
-  this->m_image2Reader = NULL;
+  this->m_image1Reader = nullptr;
+  this->m_image2Reader = nullptr;
 }
 
 bool SMAANeighborhoodBlendingOperation::determineDependingAreaOfInterest(

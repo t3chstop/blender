@@ -29,7 +29,7 @@ void AntiAliasingNode::convertToOperations(NodeConverter &converter,
   NodeAntiAliasingData *data = (NodeAntiAliasingData *)node->storage;
 
   /* Edge Detection (First Pass) */
-  SMAAEdgeDetectionOperation *operation1 = NULL;
+  SMAAEdgeDetectionOperation *operation1 = nullptr;
 
   operation1 = new SMAALumaEdgeDetectionOperation();
   operation1->setThreshold(data->threshold);
