@@ -158,9 +158,9 @@ static void area_diag(int d1, int d2, int e1, int e2, float weights[2])
 
 SMAAEdgeDetectionOperation::SMAAEdgeDetectionOperation() : NodeOperation()
 {
-  this->addInputSocket(COM_DT_COLOR); /* image */
-  this->addInputSocket(COM_DT_VALUE); /* depth, material ID, etc. */
-  this->addOutputSocket(COM_DT_COLOR);
+  this->addInputSocket(DataType::Color); /* image */
+  this->addInputSocket(DataType::Value); /* depth, material ID, etc. */
+  this->addOutputSocket(DataType::Color);
   this->setComplex(true);
   this->m_imageReader = nullptr;
   this->m_valueReader = nullptr;
@@ -404,8 +404,8 @@ bool SMAADepthEdgeDetectionOperation::determineDependingAreaOfInterest(
 
 SMAABlendingWeightCalculationOperation::SMAABlendingWeightCalculationOperation() : NodeOperation()
 {
-  this->addInputSocket(COM_DT_COLOR); /* edges */
-  this->addOutputSocket(COM_DT_COLOR);
+  this->addInputSocket(DataType::Color); /* edges */
+  this->addOutputSocket(DataType::Color);
   this->setComplex(true);
   this->m_imageReader = nullptr;
   this->m_corner_rounding = 25;
@@ -890,9 +890,9 @@ void SMAABlendingWeightCalculationOperation::detectVerticalCornerPattern(
 
 SMAANeighborhoodBlendingOperation::SMAANeighborhoodBlendingOperation() : NodeOperation()
 {
-  this->addInputSocket(COM_DT_COLOR); /* image */
-  this->addInputSocket(COM_DT_COLOR); /* blend */
-  this->addOutputSocket(COM_DT_COLOR);
+  this->addInputSocket(DataType::Color); /* image */
+  this->addInputSocket(DataType::Color); /* blend */
+  this->addOutputSocket(DataType::Color);
   this->setComplex(true);
   this->m_image1Reader = nullptr;
   this->m_image2Reader = nullptr;
