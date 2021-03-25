@@ -204,9 +204,7 @@ bool SMAAEdgeDetectionOperation::determineDependingAreaOfInterest(
   return NodeOperation::determineDependingAreaOfInterest(&newInput, readOperation, output);
 }
 
-/* Luma Edge Detection */
-
-void SMAALumaEdgeDetectionOperation::executePixel(float output[4], int x, int y, void * /*data*/)
+void SMAAEdgeDetectionOperation::executePixel(float output[4], int x, int y, void * /*data*/)
 {
   float color[4];
 
@@ -285,117 +283,7 @@ void SMAALumaEdgeDetectionOperation::executePixel(float output[4], int x, int y,
       output[1] = 0.0f;
     }
   }
-}
 
-/* Color Edge Detection */
-
-static float color_delta(const float color1[4], const float color2[4])
-{
-  return fmaxf(fmaxf(fabsf(color1[0] - color2[0]), fabsf(color1[1] - color2[1])),
-               fabsf(color1[2] - color2[2]));
-}
-
-void SMAAColorEdgeDetectionOperation::executePixel(float output[4], int x, int y, void * /*data*/)
-{
-  /* Calculate color deltas: */
-  float C[4], Cleft[4], Ctop[4];
-  sample(m_imageReader, x, y, C);
-  sample(m_imageReader, x - 1, y, Cleft);
-  sample(m_imageReader, x, y - 1, Ctop);
-  float Dleft = color_delta(C, Cleft);
-  float Dtop = color_delta(C, Ctop);
-
-  /* We do the usual threshold: */
-  output[0] = (x > 0 && Dleft >= m_threshold) ? 1.0f : 0.0f;
-  output[1] = (y > 0 && Dtop >= m_threshold) ? 1.0f : 0.0f;
-  output[2] = 0.0f;
-  output[3] = 1.0f;
-
-  /* Then discard if there is no edge: */
-  if (is_zero_v2(output)) {
-    return;
-  }
-
-  /* Calculate right and bottom deltas: */
-  float Cright[4], Cbottom[4];
-  sample(m_imageReader, x + 1, y, Cright);
-  sample(m_imageReader, x, y + 1, Cbottom);
-  float Dright = color_delta(C, Cright);
-  float Dbottom = color_delta(C, Cbottom);
-
-  /* Calculate the maximum delta in the direct neighborhood: */
-  float maxDelta = fmaxf(fmaxf(Dleft, Dright), fmaxf(Dtop, Dbottom));
-
-  /* Get color used for both left and top edges: */
-  float Clefttop[4];
-  sample(m_imageReader, x - 1, y - 1, Clefttop);
-
-  /* Left edge */
-  if (output[0] != 0.0f) {
-    /* Calculate deltas around the left pixel: */
-    float Cleftleft[4], Cleftbottom[4];
-    sample(m_imageReader, x - 2, y, Cleftleft);
-    sample(m_imageReader, x - 1, y + 1, Cleftbottom);
-    float Dleftleft = color_delta(Cleft, Cleftleft);
-    float Dlefttop = color_delta(Cleft, Clefttop);
-    float Dleftbottom = color_delta(Cleft, Cleftbottom);
-
-    /* Calculate the final maximum delta: */
-    maxDelta = fmaxf(maxDelta, fmaxf(Dleftleft, fmaxf(Dlefttop, Dleftbottom)));
-
-    /* Local contrast adaptation: */
-    if (maxDelta > m_contrast_limit * Dleft) {
-      output[0] = 0.0f;
-    }
-  }
-
-  /* Top edge */
-  if (output[1] != 0.0f) {
-    /* Calculate deltas around the top pixel: */
-    float Ctoptop[4], Ctopright[4];
-    sample(m_imageReader, x, y - 2, Ctoptop);
-    sample(m_imageReader, x + 1, y - 1, Ctopright);
-    float Dtoptop = color_delta(Ctop, Ctoptop);
-    float Dtopleft = color_delta(Ctop, Clefttop);
-    float Dtopright = color_delta(Ctop, Ctopright);
-
-    /* Calculate the final maximum delta: */
-    maxDelta = fmaxf(maxDelta, fmaxf(Dtoptop, fmaxf(Dtopleft, Dtopright)));
-
-    /* Local contrast adaptation: */
-    if (maxDelta > m_contrast_limit * Dtop) {
-      output[1] = 0.0f;
-    }
-  }
-}
-
-/* Depth Edge Detection */
-
-void SMAADepthEdgeDetectionOperation::executePixel(float output[4], int x, int y, void * /*data*/)
-{
-  float here[4], left[4], top[4];
-
-  sample(m_valueReader, x, y, here);
-  sample(m_valueReader, x - 1, y, left);
-  sample(m_valueReader, x, y - 1, top);
-
-  output[0] = (x > 0 && fabsf(here[0] - left[0]) >= m_threshold) ? 1.0f : 0.0f;
-  output[1] = (y > 0 && fabsf(here[0] - top[0]) >= m_threshold) ? 1.0f : 0.0f;
-  output[2] = 0.0f;
-  output[3] = 1.0f;
-}
-
-bool SMAADepthEdgeDetectionOperation::determineDependingAreaOfInterest(
-    rcti *input, ReadBufferOperation *readOperation, rcti *output)
-{
-  rcti newInput;
-
-  newInput.xmax = input->xmax;
-  newInput.xmin = input->xmin - 1;
-  newInput.ymax = input->ymax;
-  newInput.ymin = input->ymin - 1;
-
-  return NodeOperation::determineDependingAreaOfInterest(&newInput, readOperation, output);
 }
 
 /*-----------------------------------------------------------------------------*/

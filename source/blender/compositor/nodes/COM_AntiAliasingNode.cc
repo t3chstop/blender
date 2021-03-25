@@ -31,7 +31,7 @@ void AntiAliasingNode::convertToOperations(NodeConverter &converter,
   /* Edge Detection (First Pass) */
   SMAAEdgeDetectionOperation *operation1 = nullptr;
 
-  operation1 = new SMAALumaEdgeDetectionOperation();
+  operation1 = new SMAAEdgeDetectionOperation();
   operation1->setThreshold(data->threshold);
   operation1->setLocalContrastAdaptationFactor(data->contrast_limit);
   converter.addOperation(operation1);

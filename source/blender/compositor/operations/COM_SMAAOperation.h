@@ -39,17 +39,17 @@ class SMAAEdgeDetectionOperation : public NodeOperation {
   /**
    * the inner loop of this program
    */
-  virtual void executePixel(float output[4], int x, int y, void *data) = 0;
+  virtual void executePixel(float output[4], int x, int y, void *data) override;
 
   /**
    * Initialize the execution
    */
-  void initExecution();
+  void initExecution() override;
 
   /**
    * Deinitialize the execution
    */
-  void deinitExecution();
+  void deinitExecution() override;
 
   void setThreshold(float threshold);
 
@@ -57,25 +57,7 @@ class SMAAEdgeDetectionOperation : public NodeOperation {
 
   bool determineDependingAreaOfInterest(rcti *input,
                                         ReadBufferOperation *readOperation,
-                                        rcti *output);
-};
-
-class SMAALumaEdgeDetectionOperation : public SMAAEdgeDetectionOperation {
- public:
-  void executePixel(float output[4], int x, int y, void *data);
-};
-
-class SMAAColorEdgeDetectionOperation : public SMAAEdgeDetectionOperation {
- public:
-  void executePixel(float output[4], int x, int y, void *data);
-};
-
-class SMAADepthEdgeDetectionOperation : public SMAAEdgeDetectionOperation {
- public:
-  void executePixel(float output[4], int x, int y, void *data);
-  bool determineDependingAreaOfInterest(rcti *input,
-                                        ReadBufferOperation *readOperation,
-                                        rcti *output);
+                                        rcti *output) override;
 };
 
 /*-----------------------------------------------------------------------------*/
