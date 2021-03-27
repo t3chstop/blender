@@ -156,7 +156,7 @@ static void area_diag(int d1, int d2, int e1, int e2, float weights[2])
 /* Edge Detection (First Pass) */
 /*-----------------------------------------------------------------------------*/
 
-SMAAEdgeDetectionOperation::SMAAEdgeDetectionOperation() : NodeOperation()
+SMAAEdgeDetectionOperation::SMAAEdgeDetectionOperation()
 {
   this->addInputSocket(DataType::Color); /* image */
   this->addInputSocket(DataType::Value); /* depth, material ID, etc. */
@@ -290,7 +290,7 @@ void SMAAEdgeDetectionOperation::executePixel(float output[4], int x, int y, voi
 /* Blending Weight Calculation (Second Pass) */
 /*-----------------------------------------------------------------------------*/
 
-SMAABlendingWeightCalculationOperation::SMAABlendingWeightCalculationOperation() : NodeOperation()
+SMAABlendingWeightCalculationOperation::SMAABlendingWeightCalculationOperation()
 {
   this->addInputSocket(DataType::Color); /* edges */
   this->addOutputSocket(DataType::Color);
@@ -776,7 +776,7 @@ void SMAABlendingWeightCalculationOperation::detectVerticalCornerPattern(
 /* Neighborhood Blending (Third Pass) */
 /*-----------------------------------------------------------------------------*/
 
-SMAANeighborhoodBlendingOperation::SMAANeighborhoodBlendingOperation() : NodeOperation()
+SMAANeighborhoodBlendingOperation::SMAANeighborhoodBlendingOperation()
 {
   this->addInputSocket(DataType::Color); /* image */
   this->addInputSocket(DataType::Color); /* blend */
