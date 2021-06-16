@@ -2136,14 +2136,14 @@ void GHOST_SystemX11::getClipboard_xcout(const XEvent *evt,
   return;
 }
 
-uint8_t *GHOST_SystemX11::getClipboard(bool selection) const
+char *GHOST_SystemX11::getClipboard(bool selection) const
 {
   Atom sseln;
   Atom target = m_atom.UTF8_STRING;
   Window owner;
 
   /* from xclip.c doOut() v0.11 */
-  unsigned char *sel_buf;
+  char *sel_buf;
   unsigned long sel_len = 0;
   XEvent evt;
   unsigned int context = XCLIB_XCOUT_NONE;
@@ -2162,13 +2162,13 @@ uint8_t *GHOST_SystemX11::getClipboard(bool selection) const
   owner = XGetSelectionOwner(m_display, sseln);
   if (owner == win) {
     if (sseln == m_atom.CLIPBOARD) {
-      sel_buf = (unsigned char *)malloc(strlen(txt_cut_buffer) + 1);
-      strcpy((char *)sel_buf, txt_cut_buffer);
+      sel_buf = (char *)malloc(strlen(txt_cut_buffer) + 1);
+      strcpy(sel_buf, txt_cut_buffer);
       return sel_buf;
     }
     else {
-      sel_buf = (unsigned char *)malloc(strlen(txt_select_buffer) + 1);
-      strcpy((char *)sel_buf, txt_select_buffer);
+      sel_buf = (char *)malloc(strlen(txt_select_buffer) + 1);
+      strcpy(sel_buf, txt_select_buffer);
       return sel_buf;
     }
   }
@@ -2187,7 +2187,7 @@ uint8_t *GHOST_SystemX11::getClipboard(bool selection) const
     }
 
     /* fetch the selection, or part of it */
-    getClipboard_xcout(&evt, sseln, target, &sel_buf, &sel_len, &context);
+    getClipboard_xcout(&evt, sseln, target, (unsigned char**)&sel_buf, &sel_len, &context);
 
     if (restore_this_event) {
       restore_events.push_back(evt);
@@ -2228,8 +2228,8 @@ uint8_t *GHOST_SystemX11::getClipboard(bool selection) const
 
   if (sel_len) {
     /* Only print the buffer out, and free it, if it's not empty. */
-    unsigned char *tmp_data = (unsigned char *)malloc(sel_len + 1);
-    memcpy((char *)tmp_data, (char *)sel_buf, sel_len);
+    char *tmp_data = (char *)malloc(sel_len + 1);
+    memcpy(tmp_data, (char *)sel_buf, sel_len);
     tmp_data[sel_len] = '\0';
 
     if (sseln == m_atom.STRING)
@@ -2242,7 +2242,7 @@ uint8_t *GHOST_SystemX11::getClipboard(bool selection) const
   return NULL;
 }
 
-void GHOST_SystemX11::putClipboard(int8_t *buffer, bool selection) const
+void GHOST_SystemX11::putClipboard(char *buffer, bool selection) const
 {
   Window m_window, owner;
 
